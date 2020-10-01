@@ -22,25 +22,6 @@ lazy val baseSettings = Seq(
   version := s"0.2.0+${githash()}"
 )
 
-val amm = inputKey[Unit]("Start Ammonite REPL")
-lazy val ammoniteSettings = Seq(
-  amm := (Test / run).evaluated,
-  amm / aggregate := false,
-  libraryDependencies += "com.lihaoyi" % "ammonite" % "2.2.0" % Test cross CrossVersion.full,
-  Test / sourceGenerators += Def.task {
-    val file = (sourceManaged in Test).value / "amm.scala"
-    IO.write(
-      file,
-      """
-        |object AmmoniteBridge extends App {
-        |  ammonite.Main.main(args)
-        |}
-      """.stripMargin
-    )
-    Seq(file)
-  }.taskValue
-)
-
 lazy val commonSettings = Seq(
   scalaVersion := "2.13.3",
   scalacOptions ++= Seq(
@@ -64,7 +45,7 @@ lazy val commonSettings = Seq(
     addDevCredentials
   }
 ) ++ baseSettings ++
-  addCommandAlias("start", "reStart") ++ logging ++ ammoniteSettings
+  addCommandAlias("start", "reStart") ++ logging
 
 lazy val scaladex = project
   .in(file("."))
